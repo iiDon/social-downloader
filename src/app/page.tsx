@@ -119,23 +119,26 @@ export default function Home() {
               <Button
                 onClick={handlePaste}
                 variant="outline"
-                className="h-12 px-3 sm:px-4 flex-1 sm:flex-none bg-gray-800/50 border-gray-700 hover:bg-gray-700/50 text-gray-300 hover:text-white"
+                className="h-12 px-4 flex-1 sm:flex-none bg-gray-800/50 border-gray-700 hover:bg-gray-700/50 text-gray-300 hover:text-white flex items-center justify-center gap-2"
                 disabled={loading}
               >
-                <Clipboard className="h-4 w-4 sm:h-5 sm:w-5" />
-                <span className="mr-2 sm:hidden">لصق</span>
+                <Clipboard className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
+                <span className="sm:hidden">لصق</span>
               </Button>
               <Button
                 onClick={handleDownload}
                 disabled={loading || !url}
-                className="h-12 px-4 sm:px-6 flex-1 sm:flex-none bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold shadow-lg shadow-purple-500/25"
+                className="h-12 px-4 sm:px-6 flex-1 sm:flex-none bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold shadow-lg shadow-purple-500/25 flex items-center justify-center gap-2"
               >
                 {loading ? (
-                  <Loader2 className="h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
+                  <>
+                    <Loader2 className="h-4 w-4 sm:h-5 sm:w-5 animate-spin flex-shrink-0" />
+                    <span className="sm:hidden">جاري...</span>
+                  </>
                 ) : (
                   <>
-                    <Download className="h-4 w-4 sm:h-5 sm:w-5" />
-                    <span className="mr-2 sm:hidden">تحميل</span>
+                    <Download className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
+                    <span className="sm:hidden">تحميل</span>
                   </>
                 )}
               </Button>
@@ -150,26 +153,26 @@ export default function Home() {
                 : 'bg-red-500/10 border border-red-500/30'
             }`}>
               {result.success ? (
-                <div className="flex items-center justify-between gap-4">
+                <div className="flex flex-col sm:flex-row items-center gap-3">
                   {result.thumbnail && (
                     <img
                       src={result.thumbnail}
                       alt="thumbnail"
-                      className="w-16 h-16 rounded-lg object-cover"
+                      className="w-20 h-20 sm:w-16 sm:h-16 rounded-lg object-cover flex-shrink-0"
                       onError={(e) => {
                         e.currentTarget.style.display = 'none';
                       }}
                     />
                   )}
-                  <div className="flex-1">
-                    <p className="text-gray-300 text-sm" dir="ltr">{result.fileName}</p>
+                  <div className="flex-1 text-center sm:text-right">
+                    <p className="text-gray-300 text-xs sm:text-sm truncate" dir="ltr">{result.fileName}</p>
                   </div>
                   <Button
                     onClick={handleDirectDownload}
-                    className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold shadow-lg shadow-green-500/25"
+                    className="w-full sm:w-auto bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold shadow-lg shadow-green-500/25 flex items-center justify-center gap-2"
                   >
-                    <Download className="ml-2 h-4 w-4" />
-                    تحميل
+                    <Download className="h-5 w-5 flex-shrink-0" />
+                    <span>تحميل الملف</span>
                   </Button>
                 </div>
               ) : (
