@@ -1,103 +1,192 @@
-import Image from "next/image";
+'use client';
+
+import { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Download, Loader2, Clipboard, AlertCircle, Timer } from 'lucide-react';
+import { downloadMedia } from '@/app/actions';
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [url, setUrl] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [countdown, setCountdown] = useState<number>(0);
+  const [result, setResult] = useState<{
+    success: boolean;
+    downloadUrl?: string;
+    fileName?: string;
+    platform?: string;
+    error?: string;
+    thumbnail?: string;
+    rateLimited?: boolean;
+    retryAfter?: number;
+    remaining?: number;
+  } | null>(null);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  useEffect(() => {
+    if (countdown > 0) {
+      const timer = setTimeout(() => {
+        setCountdown(countdown - 1);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [countdown]);
+
+  const handleDownload = async () => {
+    if (!url) return;
+
+    setLoading(true);
+    setResult(null);
+
+    try {
+      const response = await downloadMedia(url);
+      setResult(response);
+
+      // Set countdown if rate limited
+      if (response.rateLimited && response.retryAfter) {
+        setCountdown(response.retryAfter);
+      }
+    } catch (error) {
+      setResult({
+        success: false,
+        error: 'فشل في معالجة الرابط'
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePaste = async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      setUrl(text);
+    } catch (err) {
+      console.error('Failed to read clipboard:', err);
+    }
+  };
+
+  const handleDirectDownload = () => {
+    if (result?.downloadUrl) {
+      window.open(result.downloadUrl, '_blank');
+    }
+  };
+
+  return (
+    <div className="h-screen bg-black font-cairo overflow-hidden flex items-center justify-center">
+      {/* Gradient Background */}
+      <div className="fixed inset-0 bg-gradient-to-br from-purple-900/20 via-black to-blue-900/20" />
+      <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-900/10 via-transparent to-transparent" />
+
+      {/* Animated Grid */}
+      <div className="fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_at_center,black_50%,transparent_100%)]" />
+
+      <div className="relative w-full max-w-2xl px-6">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-5xl font-bold mb-2">
+            <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
+              محمل الوسائط
+            </span>
+          </h1>
+          <p className="text-gray-400 text-lg">
+            تيك توك • يوتيوب • تويتر • انستغرام
+          </p>
+          {result?.remaining !== undefined && (
+            <p className="text-xs text-gray-500 mt-2">
+              الطلبات المتبقية: {result.remaining}/10
+            </p>
+          )}
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+        {/* Main Content */}
+        <div className="bg-gray-900/50 backdrop-blur-xl border border-gray-800/50 rounded-2xl p-6 shadow-2xl">
+          {/* Input Section */}
+          <div className="flex gap-2 mb-4">
+            <Input
+              type="url"
+              placeholder="الصق الرابط هنا..."
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              className="flex-1 bg-gray-800/50 border-gray-700 text-gray-100 placeholder:text-gray-500 h-12 text-base font-medium"
+              style={{ direction: 'ltr', textAlign: 'left' }}
+              disabled={loading}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleDownload();
+                }
+              }}
+            />
+            <Button
+              onClick={handlePaste}
+              variant="outline"
+              className="h-12 px-4 bg-gray-800/50 border-gray-700 hover:bg-gray-700/50 text-gray-300 hover:text-white"
+              disabled={loading}
+            >
+              <Clipboard className="h-5 w-5" />
+            </Button>
+            <Button
+              onClick={handleDownload}
+              disabled={loading || !url}
+              className="h-12 px-6 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold shadow-lg shadow-purple-500/25"
+            >
+              {loading ? (
+                <Loader2 className="h-5 w-5 animate-spin" />
+              ) : (
+                <Download className="h-5 w-5" />
+              )}
+            </Button>
+          </div>
+
+          {/* Result Section */}
+          {result && (
+            <div className={`p-4 rounded-xl backdrop-blur ${
+              result.success
+                ? 'bg-green-500/10 border border-green-500/30'
+                : 'bg-red-500/10 border border-red-500/30'
+            }`}>
+              {result.success ? (
+                <div className="flex items-center justify-between gap-4">
+                  {result.thumbnail && (
+                    <img
+                      src={result.thumbnail}
+                      alt="thumbnail"
+                      className="w-16 h-16 rounded-lg object-cover"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                      }}
+                    />
+                  )}
+                  <div className="flex-1">
+                    <p className="text-gray-300 text-sm" dir="ltr">{result.fileName}</p>
+                  </div>
+                  <Button
+                    onClick={handleDirectDownload}
+                    className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold shadow-lg shadow-green-500/25"
+                  >
+                    <Download className="ml-2 h-4 w-4" />
+                    تحميل
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 text-red-400">
+                  {countdown > 0 ? (
+                    <Timer className="h-5 w-5" />
+                  ) : (
+                    <AlertCircle className="h-5 w-5" />
+                  )}
+                  <div className="flex-1">
+                    <p className="text-sm">{result.error}</p>
+                    {countdown > 0 && (
+                      <p className="text-xs text-gray-400 mt-1">
+                        يمكنك المحاولة مرة أخرى بعد {countdown} ثانية
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
