@@ -79,15 +79,15 @@ export default function Home() {
       {/* Animated Grid */}
       <div className="fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_at_center,black_50%,transparent_100%)]" />
 
-      <div className="relative w-full max-w-2xl px-6">
+      <div className="relative w-full max-w-2xl px-4 sm:px-6">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-5xl font-bold mb-2">
+        <div className="text-center mb-6 sm:mb-8">
+          <h1 className="text-3xl sm:text-5xl font-bold mb-2">
             <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
               محمل الوسائط
             </span>
           </h1>
-          <p className="text-gray-400 text-lg">
+          <p className="text-gray-400 text-sm sm:text-lg">
             تيك توك • يوتيوب • تويتر • انستغرام
           </p>
           {result?.remaining !== undefined && (
@@ -98,15 +98,15 @@ export default function Home() {
         </div>
 
         {/* Main Content */}
-        <div className="bg-gray-900/50 backdrop-blur-xl border border-gray-800/50 rounded-2xl p-6 shadow-2xl">
+        <div className="bg-gray-900/50 backdrop-blur-xl border border-gray-800/50 rounded-2xl p-4 sm:p-6 shadow-2xl">
           {/* Input Section */}
-          <div className="flex gap-2 mb-4">
+          <div className="flex flex-col sm:flex-row gap-2 mb-4">
             <Input
               type="url"
               placeholder="الصق الرابط هنا..."
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              className="flex-1 bg-gray-800/50 border-gray-700 text-gray-100 placeholder:text-gray-500 h-12 text-base font-medium"
+              className="flex-1 bg-gray-800/50 border-gray-700 text-gray-100 placeholder:text-gray-500 h-12 text-sm sm:text-base font-medium"
               style={{ direction: 'ltr', textAlign: 'left' }}
               disabled={loading}
               onKeyDown={(e) => {
@@ -115,25 +115,31 @@ export default function Home() {
                 }
               }}
             />
-            <Button
-              onClick={handlePaste}
-              variant="outline"
-              className="h-12 px-4 bg-gray-800/50 border-gray-700 hover:bg-gray-700/50 text-gray-300 hover:text-white"
-              disabled={loading}
-            >
-              <Clipboard className="h-5 w-5" />
-            </Button>
-            <Button
-              onClick={handleDownload}
-              disabled={loading || !url}
-              className="h-12 px-6 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold shadow-lg shadow-purple-500/25"
-            >
-              {loading ? (
-                <Loader2 className="h-5 w-5 animate-spin" />
-              ) : (
-                <Download className="h-5 w-5" />
-              )}
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                onClick={handlePaste}
+                variant="outline"
+                className="h-12 px-3 sm:px-4 flex-1 sm:flex-none bg-gray-800/50 border-gray-700 hover:bg-gray-700/50 text-gray-300 hover:text-white"
+                disabled={loading}
+              >
+                <Clipboard className="h-4 w-4 sm:h-5 sm:w-5" />
+                <span className="mr-2 sm:hidden">لصق</span>
+              </Button>
+              <Button
+                onClick={handleDownload}
+                disabled={loading || !url}
+                className="h-12 px-4 sm:px-6 flex-1 sm:flex-none bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold shadow-lg shadow-purple-500/25"
+              >
+                {loading ? (
+                  <Loader2 className="h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
+                ) : (
+                  <>
+                    <Download className="h-4 w-4 sm:h-5 sm:w-5" />
+                    <span className="mr-2 sm:hidden">تحميل</span>
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
 
           {/* Result Section */}

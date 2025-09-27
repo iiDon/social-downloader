@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(pnpm dlx:*)",
-      "Bash(pnpm build:*)"
+      "Bash(pnpm build:*)",
+      "Bash(pnpm add:*)",
+      "Bash(node:*)"
     ],
     "deny": [],
     "ask": []

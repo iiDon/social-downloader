@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Cairo } from "next/font/google";
 import "./globals.css";
 
@@ -11,6 +11,33 @@ const cairo = Cairo({
 export const metadata: Metadata = {
   title: "محمل الوسائط الاجتماعية",
   description: "قم بتنزيل الفيديوهات والصور من TikTok و YouTube و Twitter و Instagram",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "محمل الوسائط",
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  openGraph: {
+    title: "محمل الوسائط الاجتماعية",
+    description: "قم بتنزيل الفيديوهات والصور من TikTok و YouTube و Twitter و Instagram",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "محمل الوسائط الاجتماعية",
+    description: "قم بتنزيل الفيديوهات والصور من TikTok و YouTube و Twitter و Instagram",
+  },
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  themeColor: '#000000',
 };
 
 export default function RootLayout({
