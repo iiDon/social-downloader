@@ -18,8 +18,8 @@ setInterval(() => {
   }
 }, 5 * 60 * 1000);
 
-export function getRealIP(): string {
-  const headersList = headers();
+export async function getRealIP(): Promise<string> {
+  const headersList = await headers();
 
   // Cloudflare real IP headers (in order of preference)
   const cfConnectingIP = headersList.get('cf-connecting-ip');

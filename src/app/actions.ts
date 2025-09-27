@@ -7,7 +7,7 @@ import { getRealIP, checkRateLimit, getRateLimitKey } from '@/lib/rate-limiter';
 export async function downloadMedia(url: string) {
   try {
     // Get real IP and check rate limit
-    const clientIP = getRealIP();
+    const clientIP = await getRealIP();
     const rateLimitKey = getRateLimitKey(clientIP);
     const rateLimitResult = checkRateLimit(rateLimitKey, {
       maxRequests: 5,  // 5 requests

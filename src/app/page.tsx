@@ -92,7 +92,7 @@ export default function Home() {
           </p>
           {result?.remaining !== undefined && (
             <p className="text-xs text-gray-500 mt-2">
-              الطلبات المتبقية: {result.remaining}/10
+              الطلبات المتبقية: {result.remaining}/5
             </p>
           )}
         </div>
