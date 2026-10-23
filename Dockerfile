@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
-# Debian 13 / glibc in both stages; registry index digests verified 2026-09-29.
-FROM node:22-trixie-slim@sha256:b26b04c123d9ff8ab646ceb18b9d75a1173acf64b9a401094b906d27b29338d4 AS builder
+# Debian 13 / glibc in both stages; registry index digests verified 2026-10-23.
+FROM node:22.23.4-trixie-slim@sha256:8eb619e402eaede1748a3c8173bffab391592812e85136452f781741c7242ddf AS builder
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
 
@@ -17,7 +17,7 @@ RUN pnpm build
 # Writable cache, copied with the same UID/GID as the nonroot runner.
 RUN mkdir -p .next/standalone/.next/cache
 
-FROM gcr.io/distroless/nodejs22-debian13:nonroot@sha256:5ef534d3db0ac0c43bee379af4ae49cfbfc0ef38a46c94c52d87c68f32f34d8a AS runner
+FROM gcr.io/distroless/nodejs22-debian13:nonroot@sha256:b0b1352373f14fe86376d423e6d283ea6b85b912ff55ca89bed8d2fe11c257b8 AS runner
 WORKDIR /app
 ENV NODE_ENV=production \
     NEXT_TELEMETRY_DISABLED=1 \
